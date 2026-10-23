@@ -20,6 +20,21 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Database tests fail, never skip, when this is unset.
+      NEWBIEGRADER_TEST_DSN: postgresql://postgres:postgres@127.0.0.1:5432/postgres
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -43,7 +58,7 @@ jobs:
           pip-audit -r deploy/host/requirements.lock
 
       - name: Byte-compile Python sources
-        run: python3 -m compileall -q grader.py server.py judge_runner.py judge_execution.py worker.py container_entrypoint.py job_sandbox.py job_resources.py email_auth.py problem_store.py tools deploy/host
+        run: python3 -m compileall -q grader.py server.py judge_runner.py judge_execution.py worker.py container_entrypoint.py job_sandbox.py job_resources.py email_auth.py problem_store.py db.py tools deploy/host
 
       - name: Syntax check frontend
         run: node --check static/app.js
@@ -104,7 +119,7 @@ jobs:
     timeout-minutes: 30
     services:
       postgres:
-        image: postgres:17
+        image: postgres:18
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: newbiegrader_test
@@ -127,7 +142,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-18
       - name: Create Supabase roles in disposable database
         run: |
           psql -X -v ON_ERROR_STOP=1 -c 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;'
@@ -143,6 +161,12 @@ jobs:
           psql -X -v ON_ERROR_STOP=1 -d newbiegrader_legacy -f supabase/schema.sql
           psql -X -v ON_ERROR_STOP=1 -d newbiegrader_legacy -f supabase/schema.sql
           psql -X -v ON_ERROR_STOP=1 -d newbiegrader_legacy -f tests/legacy_schema_verify.sql
+      - name: Plain PostgreSQL baseline applies twice and enforces role privileges
+        run: |
+          createdb -h 127.0.0.1 -U postgres newbiegrader_plain
+          psql -X -v ON_ERROR_STOP=1 -d newbiegrader_plain -f db/schema.sql
+          psql -X -v ON_ERROR_STOP=1 -d newbiegrader_plain -f db/schema.sql
+          psql -X -v ON_ERROR_STOP=1 -d newbiegrader_plain -f tests/role_privileges_sql.sql
       - name: Verify queue RPCs against PostgreSQL
         run: psql -X -v ON_ERROR_STOP=1 -f tests/queue_sql.sql
 
