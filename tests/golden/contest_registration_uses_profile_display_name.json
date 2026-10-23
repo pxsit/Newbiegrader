@@ -1,0 +1,63 @@
+{
+  "participants_show_profile_name": {
+    "body": {
+      "can_submit": true,
+      "ends_at": "2099-01-02T00:00:00+00:00",
+      "ends_in_s": "<int>",
+      "freeze_minutes": 0,
+      "frozen": false,
+      "hide_from_tasks": true,
+      "id": "c-up",
+      "participants": 2,
+      "participants_list": [
+        {
+          "at": "2001-01-01T03:00:00+00:00",
+          "email": "student.a@example.com",
+          "name": "Alice A"
+        },
+        {
+          "at": null,
+          "email": "carol@example.com",
+          "name": "Caz"
+        }
+      ],
+      "problem_details": [
+        {
+          "difficulty": "easy",
+          "id": "beta",
+          "memory_limit": 256,
+          "no": 2,
+          "samples": 1,
+          "tags": [
+            "t"
+          ],
+          "tests": 2,
+          "time_limit": 1.0,
+          "title": "Beta"
+        }
+      ],
+      "problems": [
+        "beta"
+      ],
+      "problems_open": true,
+      "registered": false,
+      "registration_open": true,
+      "registrations_supported": true,
+      "scoreboard": [],
+      "show_samples": true,
+      "starts_at": "2099-01-01T00:00:00+00:00",
+      "starts_in_s": "<int>",
+      "status": "upcoming",
+      "title": "Contest c-up"
+    },
+    "status": 200
+  },
+  "register": {
+    "body": {
+      "ok": true,
+      "participants": 2,
+      "registered": true
+    },
+    "status": 200
+  }
+}

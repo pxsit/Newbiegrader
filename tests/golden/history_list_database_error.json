@@ -1,0 +1,8 @@
+{
+  "submissions_table_missing": {
+    "body": {
+      "detail": "database error"
+    },
+    "status": 500
+  }
+}

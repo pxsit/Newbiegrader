@@ -1,0 +1,38 @@
+{
+  "admin_same_public_view": {
+    "body": {
+      "configured": true,
+      "stats": {
+        "alpha": {
+          "accepted": 1,
+          "avg": 50.0,
+          "best": 100,
+          "solvers": 1,
+          "subs": 3
+        }
+      }
+    },
+    "status": 200
+  },
+  "anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "student": {
+    "body": {
+      "configured": true,
+      "stats": {
+        "alpha": {
+          "accepted": 1,
+          "avg": 50.0,
+          "best": 100,
+          "solvers": 1,
+          "subs": 3
+        }
+      }
+    },
+    "status": 200
+  }
+}

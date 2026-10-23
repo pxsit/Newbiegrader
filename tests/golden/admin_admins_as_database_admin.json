@@ -1,0 +1,213 @@
+{
+  "admin_submissions_as_db_admin": {
+    "body": {
+      "configured": true,
+      "page": 1,
+      "pages": 1,
+      "per_page": 20,
+      "submissions": [
+        {
+          "accepted": true,
+          "contest_id": "c-run",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2099-12-31T23:30:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000007",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "gamma",
+          "score": 100,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "AC"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "CE": 1
+          },
+          "created_at": "2001-01-07T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000009",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 0,
+          "problem": "alpha",
+          "score": 0,
+          "total": 2,
+          "user_email": "student.b@example.com",
+          "verdict": "CE"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-blind",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-06T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000008",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "delta",
+          "score": 100,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "AC"
+        },
+        {
+          "accepted": false,
+          "contest_id": "c-run",
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-05T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000006",
+          "language": "python",
+          "name": "student.b@example.com",
+          "passed": 1,
+          "problem": "gamma",
+          "score": 40,
+          "total": 2,
+          "user_email": "student.b@example.com",
+          "verdict": "WA"
+        },
+        {
+          "accepted": false,
+          "contest_id": "c-run",
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-04T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000005",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 1,
+          "problem": "gamma",
+          "score": 50,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "WA"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "WA": 2
+          },
+          "created_at": "2001-01-03T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000003",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 0,
+          "problem": "beta",
+          "score": 0,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "WA"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-02T00:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000002",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 1,
+          "problem": "alpha",
+          "score": 50,
+          "total": 2,
+          "user_email": "student.b@example.com",
+          "verdict": "WA"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-ended",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T12:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000004",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "AC"
+        },
+        {
+          "accepted": true,
+          "contest_id": null,
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T01:00:00+00:00",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "user_email": "student.a@example.com",
+          "verdict": "AC"
+        }
+      ],
+      "total": 9
+    },
+    "status": 200
+  },
+  "delete_self": {
+    "body": {
+      "detail": "cannot remove your own admin access"
+    },
+    "status": 400
+  },
+  "list_as_db_admin": {
+    "body": {
+      "admins": [
+        {
+          "created_at": null,
+          "created_by": "ADMIN_EMAILS",
+          "email": "admin@example.com",
+          "removable": false,
+          "source": "env"
+        },
+        {
+          "created_at": "2001-01-03T00:00:00+00:00",
+          "created_by": "admin@example.com",
+          "email": "admin2@example.com",
+          "removable": false,
+          "source": "database"
+        }
+      ],
+      "candidates": [
+        {
+          "email": "carol@example.com",
+          "name": "Carol C"
+        },
+        {
+          "email": "student.b@example.com",
+          "name": "Bob B"
+        },
+        {
+          "email": "student.a@example.com",
+          "name": "Alice A"
+        }
+      ],
+      "configured": true,
+      "you": "admin2@example.com"
+    },
+    "status": 200
+  }
+}

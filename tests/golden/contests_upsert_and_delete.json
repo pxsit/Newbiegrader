@@ -1,0 +1,293 @@
+{
+  "bad_freeze": {
+    "body": {
+      "detail": "freeze_minutes must be a number"
+    },
+    "status": 400
+  },
+  "bad_id": {
+    "body": {
+      "detail": "id must be 2-40 chars: a-z 0-9 _ -"
+    },
+    "status": 400
+  },
+  "bad_starts_at": {
+    "body": {
+      "detail": "starts_at must be ISO-8601 (e.g. <ts>)"
+    },
+    "status": 400
+  },
+  "create_naive_timestamp_assumed_utc": {
+    "body": {
+      "contest": {
+        "ends_at": "2099-03-01T13:00:00+00:00",
+        "freeze_minutes": 30,
+        "hide_from_tasks": false,
+        "id": "c-naive",
+        "participants": 0,
+        "problems": [
+          "alpha",
+          "beta"
+        ],
+        "registered": false,
+        "show_samples": false,
+        "starts_at": "2099-03-01T09:00:00+00:00",
+        "status": "upcoming",
+        "title": "c-naive"
+      },
+      "ok": true
+    },
+    "status": 200
+  },
+  "create_ok": {
+    "body": {
+      "contest": {
+        "ends_at": "2099-02-02T00:00:00+00:00",
+        "freeze_minutes": 30,
+        "hide_from_tasks": false,
+        "id": "c-new",
+        "participants": 0,
+        "problems": [
+          "alpha",
+          "beta"
+        ],
+        "registered": false,
+        "show_samples": false,
+        "starts_at": "2099-02-01T00:00:00+00:00",
+        "status": "upcoming",
+        "title": "New Round"
+      },
+      "ok": true
+    },
+    "status": 200
+  },
+  "delete_ok": {
+    "body": {
+      "ok": true
+    },
+    "status": 200
+  },
+  "delete_student": {
+    "body": {
+      "detail": "admin only"
+    },
+    "status": 403
+  },
+  "delete_unknown_still_ok": {
+    "body": {
+      "ok": true
+    },
+    "status": 200
+  },
+  "ends_before_start": {
+    "body": {
+      "detail": "ends_at must be after starts_at"
+    },
+    "status": 400
+  },
+  "get_after_update": {
+    "body": {
+      "can_submit": true,
+      "ends_at": "2099-02-02T00:00:00+00:00",
+      "ends_in_s": "<int>",
+      "freeze_minutes": 1440,
+      "frozen": false,
+      "hide_from_tasks": false,
+      "id": "c-new",
+      "participants": 0,
+      "participants_list": [],
+      "problem_details": [
+        {
+          "difficulty": "easy",
+          "id": "gamma",
+          "memory_limit": 256,
+          "no": 3,
+          "samples": 1,
+          "tags": [
+            "t"
+          ],
+          "tests": 2,
+          "time_limit": 1.0,
+          "title": "Gamma"
+        }
+      ],
+      "problems": [
+        "gamma"
+      ],
+      "problems_open": true,
+      "registered": false,
+      "registration_open": true,
+      "registrations_supported": true,
+      "scoreboard": [],
+      "show_samples": false,
+      "starts_at": "2099-02-01T00:00:00+00:00",
+      "starts_in_s": "<int>",
+      "status": "upcoming",
+      "title": "Renamed"
+    },
+    "status": 200
+  },
+  "get_deleted": {
+    "body": {
+      "detail": "unknown contest"
+    },
+    "status": 404
+  },
+  "id_is_lowercased": {
+    "body": {
+      "contest": {
+        "ends_at": "2099-02-02T00:00:00+00:00",
+        "freeze_minutes": 30,
+        "hide_from_tasks": false,
+        "id": "c-upper",
+        "participants": 0,
+        "problems": [
+          "alpha",
+          "beta"
+        ],
+        "registered": false,
+        "show_samples": false,
+        "starts_at": "2099-02-01T00:00:00+00:00",
+        "status": "upcoming",
+        "title": "New Round"
+      },
+      "ok": true
+    },
+    "status": 200
+  },
+  "list_after_create": {
+    "body": {
+      "configured": true,
+      "contests": [
+        {
+          "ends_at": "2099-02-02T00:00:00+00:00",
+          "freeze_minutes": 30,
+          "hide_from_tasks": false,
+          "id": "c-new",
+          "participants": 0,
+          "problems": [
+            "alpha",
+            "beta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2099-02-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "New Round"
+        },
+        {
+          "ends_at": "2099-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": true,
+          "id": "c-up",
+          "participants": 1,
+          "problems": [
+            "beta"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2099-01-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "Contest c-up"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 60,
+          "hide_from_tasks": false,
+          "id": "c-run",
+          "participants": 2,
+          "problems": [
+            "gamma"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T02:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-run"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-blind",
+          "participants": 0,
+          "problems": [
+            "delta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2001-01-01T01:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-blind"
+        },
+        {
+          "ends_at": "2001-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-ended",
+          "participants": 0,
+          "problems": [
+            "alpha"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T00:00:00+00:00",
+          "status": "ended",
+          "title": "Contest c-ended"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "no_problems": {
+    "body": {
+      "detail": "problems must be a non-empty list of problem ids (unknown: [])"
+    },
+    "status": 400
+  },
+  "not_object": {
+    "body": {
+      "detail": "JSON body must be an object"
+    },
+    "status": 400
+  },
+  "unknown_problem": {
+    "body": {
+      "detail": "problems must be a non-empty list of problem ids (unknown: ['nope'])"
+    },
+    "status": 400
+  },
+  "update_existing": {
+    "body": {
+      "contest": {
+        "ends_at": "2099-02-02T00:00:00+00:00",
+        "freeze_minutes": 1440,
+        "hide_from_tasks": false,
+        "id": "c-new",
+        "participants": 0,
+        "problems": [
+          "gamma"
+        ],
+        "registered": false,
+        "show_samples": false,
+        "starts_at": "2099-02-01T00:00:00+00:00",
+        "status": "upcoming",
+        "title": "Renamed"
+      },
+      "ok": true
+    },
+    "status": 200
+  },
+  "upsert_anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "upsert_student": {
+    "body": {
+      "detail": "admin only"
+    },
+    "status": 403
+  }
+}

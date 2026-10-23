@@ -1,0 +1,17 @@
+{
+  "empty": {
+    "body": {
+      "configured": true,
+      "contests": []
+    },
+    "status": 200
+  },
+  "table_missing_degrades": {
+    "body": {
+      "configured": false,
+      "contests": [],
+      "hint": "contests table missing - run supabase/schema.sql"
+    },
+    "status": 200
+  }
+}

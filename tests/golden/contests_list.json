@@ -1,0 +1,274 @@
+{
+  "admin_sees_upcoming_problems": {
+    "body": {
+      "configured": true,
+      "contests": [
+        {
+          "ends_at": "2099-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": true,
+          "id": "c-up",
+          "participants": 1,
+          "problems": [
+            "beta"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2099-01-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "Contest c-up"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 60,
+          "hide_from_tasks": false,
+          "id": "c-run",
+          "participants": 2,
+          "problems": [
+            "gamma"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T02:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-run"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-blind",
+          "participants": 0,
+          "problems": [
+            "delta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2001-01-01T01:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-blind"
+        },
+        {
+          "ends_at": "2001-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-ended",
+          "participants": 0,
+          "problems": [
+            "alpha"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T00:00:00+00:00",
+          "status": "ended",
+          "title": "Contest c-ended"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "student_a_registered_flags": {
+    "body": {
+      "configured": true,
+      "contests": [
+        {
+          "ends_at": "2099-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": true,
+          "id": "c-up",
+          "participants": 1,
+          "problems": [],
+          "registered": true,
+          "show_samples": true,
+          "starts_at": "2099-01-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "Contest c-up"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 60,
+          "hide_from_tasks": false,
+          "id": "c-run",
+          "participants": 2,
+          "problems": [
+            "gamma"
+          ],
+          "registered": true,
+          "show_samples": true,
+          "starts_at": "2001-01-01T02:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-run"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-blind",
+          "participants": 0,
+          "problems": [
+            "delta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2001-01-01T01:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-blind"
+        },
+        {
+          "ends_at": "2001-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-ended",
+          "participants": 0,
+          "problems": [
+            "alpha"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T00:00:00+00:00",
+          "status": "ended",
+          "title": "Contest c-ended"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "student_b": {
+    "body": {
+      "configured": true,
+      "contests": [
+        {
+          "ends_at": "2099-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": true,
+          "id": "c-up",
+          "participants": 1,
+          "problems": [],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2099-01-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "Contest c-up"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 60,
+          "hide_from_tasks": false,
+          "id": "c-run",
+          "participants": 2,
+          "problems": [
+            "gamma"
+          ],
+          "registered": true,
+          "show_samples": true,
+          "starts_at": "2001-01-01T02:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-run"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-blind",
+          "participants": 0,
+          "problems": [
+            "delta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2001-01-01T01:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-blind"
+        },
+        {
+          "ends_at": "2001-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-ended",
+          "participants": 0,
+          "problems": [
+            "alpha"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T00:00:00+00:00",
+          "status": "ended",
+          "title": "Contest c-ended"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "student_without_registrations": {
+    "body": {
+      "configured": true,
+      "contests": [
+        {
+          "ends_at": "2099-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": true,
+          "id": "c-up",
+          "participants": 1,
+          "problems": [],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2099-01-01T00:00:00+00:00",
+          "status": "upcoming",
+          "title": "Contest c-up"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 60,
+          "hide_from_tasks": false,
+          "id": "c-run",
+          "participants": 2,
+          "problems": [
+            "gamma"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T02:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-run"
+        },
+        {
+          "ends_at": "2099-12-31T23:59:59+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-blind",
+          "participants": 0,
+          "problems": [
+            "delta"
+          ],
+          "registered": false,
+          "show_samples": false,
+          "starts_at": "2001-01-01T01:00:00+00:00",
+          "status": "running",
+          "title": "Contest c-blind"
+        },
+        {
+          "ends_at": "2001-01-02T00:00:00+00:00",
+          "freeze_minutes": 0,
+          "hide_from_tasks": false,
+          "id": "c-ended",
+          "participants": 0,
+          "problems": [
+            "alpha"
+          ],
+          "registered": false,
+          "show_samples": true,
+          "starts_at": "2001-01-01T00:00:00+00:00",
+          "status": "ended",
+          "title": "Contest c-ended"
+        }
+      ]
+    },
+    "status": 200
+  }
+}
