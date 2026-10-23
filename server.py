@@ -308,6 +308,33 @@ class RequestBodyLimit:
         await self.app(scope, replay, send)
 
 
+class MemberBoundaryMiddleware:
+    """Require verified identity inside the existing CSRF/CORS/header layers."""
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        path = scope.get("path", "")
+        public_api = path in {"/api/home", "/api/health", "/api/version", "/api/languages"} \
+            or path.startswith("/api/auth/")
+        protected = (path.startswith("/api/") and not public_api) \
+            or path in {"/docs", "/redoc", "/openapi.json"}
+
+        async def private_send(message):
+            if protected and message["type"] == "http.response.start":
+                headers = [(k, v) for k, v in message.get("headers", [])
+                           if k.lower() != b"cache-control"]
+                message["headers"] = headers + [(b"cache-control", b"private, no-store")]
+            await send(message)
+
+        if protected and scope.get("method") != "OPTIONS" \
+                and not (scope.get("session", {}).get("user") or {}).get("email"):
+            return await JSONResponse({"detail": "login required"}, 401)(scope, receive, private_send)
+        await self.app(scope, receive, private_send)
+
+
 async def _json_object(request: Request) -> dict:
     try:
         body = await request.json()
@@ -321,6 +348,7 @@ async def _json_object(request: Request) -> dict:
 app = FastAPI(title="Newbiegrader API", version="2.0.0", lifespan=_lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(RequestBodyLimit)
+app.add_middleware(MemberBoundaryMiddleware)
 @app.exception_handler(Exception)
 async def _unexpected_exception_handler(request: Request, exc: Exception):
     """Convert unexpected exceptions to a generic JSON 500 instead of FastAPI's
@@ -2886,10 +2914,14 @@ def list_problems(request: Request, response: Response, sort: str = "") -> dict:
     # Per-user body (admin sees hidden rows): private cache only, never shared.
     response.headers["Cache-Control"] = "private, max-age=20"
     response.headers["Vary"] = "Cookie, Authorization"
+    email = (request.session.get("user") or {}).get("email", "")
+    return {"problems": _listed_problems(email, sort)}
+
+
+def _listed_problems(email: str, sort: str = "") -> list:
     _ensure_problems_fresh()
     order = {"easy": 0, "medium": 1, "hard": 2}
     sort_by_difficulty = (sort or "").strip().lower() == "difficulty"
-    email = (request.session.get("user") or {}).get("email", "")
     admin = _is_admin(email)
     hidden = _hidden_pids()
     listed, contest_hidden = _contest_problem_sets()
@@ -2916,7 +2948,26 @@ def list_problems(request: Request, response: Response, sort: str = "") -> dict:
             item["config_hidden"] = p.hidden
             item["contest_hidden"] = p.pid in contest_hidden
         out.append(item)
-    return {"problems": out}
+    return out
+
+
+@app.get("/api/home")
+async def home_preview(response: Response) -> dict:
+    """Only the public landing preview; never statements, samples or history."""
+    response.headers["Cache-Control"] = "private, no-store"
+    rows = await asyncio.to_thread(_listed_problems, "")
+    allowed = ("id", "no", "title", "difficulty", "tags", "time_limit", "memory_limit")
+    preview = []
+    for difficulty in ("easy", "medium", "hard"):
+        preview.extend({key: row[key] for key in allowed}
+                       for row in [r for r in rows if r["difficulty"] == difficulty][:3])
+    public_stats = await stats()
+    totals = {"subs": 0, "accepted": 0}
+    for row in public_stats.get("stats", {}).values():
+        for key in totals:
+            totals[key] += row.get(key) or 0
+    return {"problems": preview, "problems_count": len(rows),
+            "summary": totals, "configured": bool(public_stats.get("configured"))}
 
 
 @app.get("/api/problems/{pid}")
@@ -4511,7 +4562,7 @@ def admin_plagiarism(request: Request, problem: str = "",
 
 @app.get("/api/{path:path}")
 async def api_unknown(path: str) -> dict:
-    """Unknown /api/* must be JSON 404, never the SPA index.html.
+    """Unknown member /api/* returns JSON 404 after authentication, never SPA HTML.
 
     The static mount below (html=True) serves index.html for any unknown path;
     without this guard a mistyped API URL returns 200 HTML and clients fail

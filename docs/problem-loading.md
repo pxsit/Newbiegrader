@@ -8,17 +8,18 @@ See [file storage](BACKEND_PROBLEM_FILES.md).
 
 ## Browser and server caches
 
-| Response | Normal browser cache policy | Hidden/admin-visible problem |
-| --- | --- | --- |
-| Detail | `private, max-age=60` | `private, max-age=30` |
-| Public sample | `private, max-age=300` | `private, max-age=30` |
-| PDF | `private, max-age=600` plus content ETag | `private, max-age=30` plus content ETag |
+The public landing uses `/api/home`, which returns at most three problem
+previews per difficulty and aggregate submission totals. Full catalogs, details,
+samples, PDFs, statistics, contests and submission endpoints require a verified
+website session. Registration, login and recovery remain accessible to guests.
+Health/version/language diagnostics remain public for monitoring.
 
-These responses vary by Cookie and are not shared through the edge cache.
-Visibility is checked before a PDF response, including a conditional 304 request
-that reaches the API. Browser freshness can avoid a new request until expiry;
-changing visibility cannot retract bytes already returned or cached. Identity
-changes invalidate the SPA's identity-specific caches and delayed responses.
+All member API responses use `private, no-store`, including denials and
+conditional PDF responses. This overrides the handlers' legacy freshness hints
+so HTTP caches cannot reopen member content after logout. Existing downloaded
+bytes cannot be retracted. Identity changes invalidate the SPA's in-memory
+caches and delayed responses; local catalog data is read only after login.
+PDF hover downloads are disabled because they cannot warm a no-store cache.
 
 The bounded server PDF cache expires after 300 seconds. Metadata refresh normally
 runs every 30 seconds and invalidates a PDF when `updated_at` or

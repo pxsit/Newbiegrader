@@ -226,6 +226,7 @@ class ApiE2E(unittest.TestCase):
             server.QUEUE_MAX = original
 
     def test_samples_are_public_hidden_tests_are_not(self):
+        self.login(STUDENT_A)
         for name in ("01", "02", "03"):
             ok = self.client.get(f"/api/problems/thai_time/sample/{name}")
             self.assertEqual(ok.status_code, 200, name)
@@ -637,9 +638,9 @@ class ApiE2E(unittest.TestCase):
                              json={"email": ADMIN, "password": PASSWORD, "name": "X"},
                              headers=BROWSER)
         self.assertEqual(r.status_code, 403, r.text)
-        # Unknown API paths are JSON 404, never the SPA index.html.
+        # Unknown API paths require login and never return the SPA index.html.
         r = self.client.get("/api/no-such-endpoint")
-        self.assertEqual(r.status_code, 404, r.text)
+        self.assertEqual(r.status_code, 401, r.text)
         self.assertIn("application/json", r.headers.get("content-type", ""))
         # Bad plagiarism params are 400/422, not 500.
         self.login(ADMIN)
@@ -851,6 +852,12 @@ class ApiE2E(unittest.TestCase):
         self.assertIn("count_islands", body["system"]["problems_loaded"])
 
     def test_stats_use_all_time_views(self):
+        self.login(STUDENT_A)
+        # Independent of earlier judging tests or platform execution support.
+        row = {"id": "stats-view-canary", "problem": "thai_time", "accepted": True,
+               "score": 100, "user_email": STUDENT_A, "contest_id": None}
+        self.fake.rows("submissions").append(row)
+        self.addCleanup(lambda: self.fake.rows("submissions").remove(row))
         s = self.client.get("/api/stats").json()
         self.assertTrue(s["configured"])
         thai = s["stats"]["thai_time"]
@@ -1196,6 +1203,7 @@ class ApiE2E(unittest.TestCase):
                                             headers=browser).status_code, 200)
 
     def test_contest_scores_do_not_touch_practice_stats(self):
+        self.login(STUDENT_A)
         self.addCleanup(lambda: self.fake.tables.__setitem__("contests", []))
         # snapshot BEFORE seeding: stats cover every submission in the fake DB
         before_subs = (self.client.get("/api/stats").json()["stats"].get("thai_time")
@@ -1233,6 +1241,7 @@ class ApiE2E(unittest.TestCase):
         visible = [pid for pid in server.PROBLEMS
                    if pid not in server._hidden_pids()]
         self.assertEqual(sorted(h["problems"]), sorted(visible))
+        self.login(STUDENT_A)
         detail = self.client.get("/api/problems/count_islands").json()
         self.assertEqual(detail["samples"], ["01", "02", "03"])
         # The public payload must not announce the hidden-test count.

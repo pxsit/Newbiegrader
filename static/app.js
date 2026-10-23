@@ -11,6 +11,8 @@ const state = {
   problems: [],
   stats: {},
   statsLoaded: false,
+  homeSummary: null,
+  authReturnTo: "#/tasks",
   homeLevel: "easy",
   homeSelected: null,
   homeOffset: 0,
@@ -36,8 +38,6 @@ const state = {
 };
 
 const _sampleInflight = new Map();   // "<pid>/<name>" -> Promise
-const _pdfPrefetched = new Set();
-let _pdfPrefetchTimer = 0;
 
 /* ---------------- theme ---------------- */
 function icon(n, cls) {
@@ -99,6 +99,7 @@ function renderPalette() {
 }
 
 function openPalette() {
+  if (!state.user) { _nav("#/tasks", "push"); return; }
   $("palette-overlay").classList.remove("hidden");
   $("palette-input").value = "";
   paletteIdx = 0;
@@ -647,9 +648,21 @@ int main() {
 /* One fetch wrapper: JSON in/out, and errors carry the server `detail`
  * verbatim plus `status` so callers can special-case 401/403/409/429. */
 async function apiFetch(path, opts) {
+  const identity = state.user;
   const r = await fetch(API + path, opts);
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
+    if (r.status === 401 && !path.startsWith("/api/auth/") && state.user && state.user === identity) {
+      state.user = null;
+      state.is_admin = state.isAdmin = false;
+      state.problems = [];
+      state.stats = {};
+      state.statsLoaded = false;
+      clearGetCache();
+      try { localStorage.removeItem(PROBLEMS_CACHE_KEY); } catch (e) { /* ignore */ }
+      router();
+      void refreshMe();
+    }
     const err = new Error(data.detail || `HTTP ${r.status} (${path})`);
     err.status = r.status;
     const retry = r.headers.get("Retry-After");
@@ -709,7 +722,6 @@ function invalidateGetCache() {
   _detailInflight.clear();
   state.samples = {};
   _sampleInflight.clear();
-  _pdfPrefetched.clear();
   state.taskSeq = (state.taskSeq || 0) + 1;
 }
 
@@ -730,11 +742,14 @@ function apiDelete(path) {
 }
 
 async function fetchStats() {
+  const gen = _getGen;
   try {
     const s = await apiGet("/api/stats");
+    if (gen !== _getGen) return;
     state.stats = (s && s.configured && s.stats) || {};
     state.statsLoaded = !!(s && s.configured);
   } catch (e) {
+    if (gen !== _getGen) return;
     state.stats = {};
     state.statsLoaded = false;
   }
@@ -898,6 +913,16 @@ function currentRouteRender() {
   return null;
 }
 
+function publicRoute(hash) {
+  return hash === "#/" || hash === "#/login" || hash.startsWith("#/login?") || hash === "#/login/register";
+}
+
+function loginDestination() {
+  const route = state.authReturnTo || "#/tasks";
+  return /^#\/(?:tasks|archive|history|settings|admin|task\/[^?#]+|submission\/[^?#]+|contests(?:\/[^?#]+)?)$/.test(route)
+    ? route : "#/tasks";
+}
+
 function router() {
   const pend = _pendingNav;
   _pendingNav = null;
@@ -906,6 +931,13 @@ function router() {
   // trustworthy, anything else is a Back/Forward traversal.
   _syncHistoryEntry(pend && pend.to === h ? pend.kind : null);
   _currentRoute = h;
+  if (!publicRoute(h) && !state.user) {
+    stopContestTicker();
+    if (!state.authReady) { show("home"); return; }
+    state.authReturnTo = h;
+    _nav("#/login", "replace");
+    return;
+  }
   if (!h.startsWith("#/contests/")) stopContestTicker();
   if (h.startsWith("#/submission/")) {
     show("submission");
@@ -938,6 +970,14 @@ function router() {
   }
   if (h === "#/login" || h.startsWith("#/login?")) {
     show("login"); setTitle("login"); setAuthMode("login");
+    if (state.authError) {
+      $("auth-err").textContent = "ตรวจสอบการเข้าสู่ระบบไม่สำเร็จ กรุณาโหลดหน้าอีกครั้ง";
+      $("auth-err").classList.remove("hidden");
+    }
+    if (!state.authError && state.authReturnTo !== "#/tasks") {
+      $("auth-err").textContent = "เข้าสู่ระบบก่อนเพื่อเปิดหน้าที่เลือกไว้";
+      $("auth-err").classList.remove("hidden", "bad");
+    }
     if (h.includes("email_proof=required")) {
       $("auth-err").textContent = "กรุณาเข้าสู่ระบบด้วยรหัสผ่าน หรือยืนยันอีเมลเพื่อตั้งรหัสผ่านใหม่ บัญชี Google จะไม่ถูกผูกกับบัญชีเดิมโดยอัตโนมัติ";
       $("auth-err").classList.remove("hidden");
@@ -955,6 +995,10 @@ window.addEventListener("hashchange", router);
 function renderHome(animateSelection = false) {
   let subs = 0, acc = 0;
   Object.values(state.stats).forEach((s) => { subs += s.subs || 0; acc += s.accepted || 0; });
+  if (!state.user && state.homeSummary) {
+    subs = state.homeSummary.subs || 0;
+    acc = state.homeSummary.accepted || 0;
+  }
   $("stat-subs").textContent = state.statsLoaded ? subs : "—";
   $("stat-accepted").textContent = state.statsLoaded ? acc : "—";
   $("stat-mine").textContent = state.user
@@ -1201,13 +1245,10 @@ function renderTasksTable() {
       <div class="tc-side score-wrap">${taskScoreHtml(p.id)}<span class="row-arrow" aria-hidden="true">↗</span></div>`;
     card.onmouseenter = () => {
       prefetchDetail(p.id);
-      if (p.has_pdf) schedulePdfPrefetch(p.id);
     };
     card.onfocus = () => {
       prefetchDetail(p.id);
-      if (p.has_pdf) schedulePdfPrefetch(p.id);
     };
-    card.onmouseleave = () => clearTimeout(_pdfPrefetchTimer);
     box.appendChild(card);
   });
   if (state.user && !state.myBestLoaded) {
@@ -1354,27 +1395,6 @@ function prefetchSamples(p) {
   (p.samples || []).slice(0, 4).forEach((name) => {
     loadSample(p.id, name).catch(() => { /* click retries or reports */ });
   });
-}
-
-function prefetchPdf(pid) {
-  if (!pid || _pdfPrefetched.has(pid)) return;
-  _pdfPrefetched.add(pid);
-  const url = `${API}/api/problems/${encodeURIComponent(pid)}/pdf`;
-  // Consume the body so the private HTTP cache definitely retains it; the
-  // iframe request that follows the click can then finish from disk.
-  fetch(url, { credentials: "include" })
-    .then((r) => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.blob();
-    })
-    .catch(() => {
-      _pdfPrefetched.delete(pid);   // allow a later hover to retry
-    });
-}
-
-function schedulePdfPrefetch(pid) {
-  clearTimeout(_pdfPrefetchTimer);
-  _pdfPrefetchTimer = setTimeout(() => prefetchPdf(pid), 180);
 }
 
 function renderSampleButtons(p) {
@@ -1661,6 +1681,7 @@ async function refreshMe() {
     state.problems = problemRowsForIdentity(state.problems);
     state.contests = [];
     state.contestCache = {};
+    if (state.user && state.authReady) await Promise.all([refreshProblems(), fetchStats()]);
   }
   state.myBestLoaded = false;
   state.myBest = {};
@@ -1708,6 +1729,7 @@ async function restoreInitialSession() {
 }
 
 $("login-btn").onclick = () => {
+  state.authReturnTo = "#/tasks";
   location.hash = "#/login";
 };
 
@@ -1741,8 +1763,12 @@ async function signOut() {
   setDraftHint(false);
   state.jobResults = {};
   await refreshMe();
-  location.hash = "#/tasks";
-  renderTasksTable();
+  state.problems = [];
+  state.stats = {};
+  state.statsLoaded = false;
+  location.hash = "#/";
+  await loadPublicHome();
+  renderHome();
   toast("ออกจากระบบแล้ว");
 }
 $("logout-btn").onclick = signOut;
@@ -1974,7 +2000,7 @@ function renderAuthStep() {
   const verifying = !!authPendingEmail;
   $("auth-heading").textContent = verifying ? "ยืนยันอีเมล" : authMode === "login" ? "เข้าสู่ระบบ" : "สร้างบัญชี";
   $("auth-description").textContent = verifying ? "กรอกรหัสที่ได้รับทางอีเมล แล้วตั้งรหัสผ่านสำหรับบัญชีของคุณ" :
-    authMode === "login" ? "ดูประวัติการส่ง บันทึกคะแนน และเปิดดูโค้ดของเพื่อน" : "ยืนยันอีเมลของคุณเพื่อเริ่มส่งคำตอบและเก็บประวัติการฝึก";
+    authMode === "login" ? "เข้าสู่ระบบเพื่อเปิดโจทย์ ส่งคำตอบ และดูประวัติการฝึกของคุณ" : "ยืนยันอีเมลของคุณเพื่อเริ่มส่งคำตอบและเก็บประวัติการฝึก";
   $("auth-fields").setAttribute("aria-labelledby", authMode === "login" ? "auth-tab-login" : "auth-tab-register");
   $("row-name").style.display = verifying ? "" : "none";
   $("row-auth-code").classList.toggle("hidden", !verifying);
@@ -2091,7 +2117,7 @@ async function doPasswordAuth(resend = false) {
     $("auth-code").value = "";
     authPendingEmail = "";
     await refreshMe();
-    location.hash = "#/tasks";
+    location.hash = loginDestination();
   } catch (e) {
     err.classList.add("bad");
     err.textContent = e.message;
@@ -4049,7 +4075,7 @@ $("ct-save").onclick = async () => {
 
 /* ---------------- init (cache-first, parallel, non-blocking) ---------------- */
 // Catalog numbers changed in the approved difficulty-order migration.
-const PROBLEMS_CACHE_KEY = "ng_problems_v4";
+const PROBLEMS_CACHE_KEY = "ng_problems_v5";
 const PROBLEMS_CACHE_TTL = 3600 * 1000;
 
 function loadProblemsCache() {
@@ -4067,7 +4093,7 @@ function saveProblemsCache() {
   // The admin list carries contest-only problems (hidden/contest_only flags and
   // the extra rows). Never persist it: browsers are often shared, and a cached
   // admin list would flash those titles at the next user of the machine.
-  if (state.is_admin) {
+  if (state.is_admin || !state.user) {
     try { localStorage.removeItem(PROBLEMS_CACHE_KEY); } catch (e) { /* ignore */ }
     return;
   }
@@ -4088,8 +4114,10 @@ function problemsCacheAgeMs() {
 }
 
 async function refreshProblems() {
+  const gen = _getGen;
   try {
     const d = await apiGet("/api/problems");
+    if (gen !== _getGen || !state.user) return false;
     if (d && Array.isArray(d.problems)) {
       state.problems = problemRowsForIdentity(d.problems);
       saveProblemsCache();
@@ -4099,6 +4127,17 @@ async function refreshProblems() {
     }
   } catch (e) { /* keep whatever we have */ }
   return false;
+}
+
+async function loadPublicHome() {
+  const gen = _getGen;
+  try {
+    const data = await apiGet("/api/home");
+    if (gen !== _getGen || state.user) return;
+    state.problems = data.problems || [];
+    state.homeSummary = data.summary || null;
+    state.statsLoaded = !!data.configured;
+  } catch (e) { /* the landing shell remains usable during an outage */ }
 }
 
 /* Canonical tag taxonomy (mirrors KNOWN_TAGS in grader.py). */
@@ -4283,7 +4322,7 @@ async function init() {
   $("auth-code").onkeydown = (e) => { if (e.key === "Enter") doPasswordAuth(); };
   $("auth-pass").onkeydown = (e) => { if (e.key === "Enter") doPasswordAuth(); };
   $("google-btn").onclick = () => {
-    location.href = API + "/api/auth/login?" + new URLSearchParams({ next: "#/tasks", remember: String($("auth-remember").checked) }).toString();
+    location.href = API + "/api/auth/login?" + new URLSearchParams({ next: loginDestination(), remember: String($("auth-remember").checked) }).toString();
   };
   $("report-send").onclick = async () => {
     if (!state.user) {
@@ -4313,17 +4352,12 @@ async function init() {
       $("report-status").textContent = "ส่งไม่สำเร็จ: " + e.message;
     }
   };
-  // 1. paint instantly from cache (no network wait)
-  if (loadProblemsCache()) buildFilterOptions();
+  // The landing shell may render immediately; private routes wait for both
+  // the session and remember-me checks, without painting cached private views.
   router();
 
-  // 2. fire the list, the identity and the health light together. Health used
-  // to gate everything, so a slow proxy cost two round trips before the list
-  // was even requested; now it only drives the status label.
-  const problemsFresh = problemsCacheAgeMs() < 60 * 1000 && state.problems.length > 0;
-  // Stats contain only public aggregates and need not wait for identity or
-  // remember-me. Start their network round trip alongside the catalog.
-  const statsP = fetchStats();
+  // Load only landing data until the session has been verified.
+  const homeP = loadPublicHome();
   let healthErr = null;
   const healthP = apiGet("/api/health").then(() => {
     $("health").textContent = "online";
@@ -4332,14 +4366,17 @@ async function init() {
     healthErr = e;
     $("health").textContent = "offline";
   });
-  // The problems list changes rarely (server caches 20-30s, browser cache 1h):
-  // skip the refetch when the cache was just written (<60s) to save a proxied
-  // round trip on every navigation/reload.
-  const [data] = await Promise.all([
-    problemsFresh ? Promise.resolve(null) : apiGet("/api/problems").catch(() => null),
+  // A remembered session must finish restoring before loading member data.
+  await Promise.all([
+    homeP,
     restoreInitialSession(),
     healthP,
   ]);
+  if (state.user) {
+    if (loadProblemsCache()) buildFilterOptions();
+    await refreshProblems();
+  }
+  const statsP = state.user ? fetchStats() : Promise.resolve();
   if (healthErr && !state.problems.length && location.hash !== "#/admin") {
     show("home");
     document.querySelector("#view-home .practice-description").textContent =
@@ -4351,22 +4388,7 @@ async function init() {
   // directly (bookmark/reload on #/settings, #/contests, #/task/<id>) can be
   // stale: admin cards hidden, contest banner missing, "your score" blank.
   // Re-render whatever is on screen now that the session is known.
-  if (location.hash && location.hash !== "#/") {
-    const r = currentRouteRender();
-    if (r) r();
-  } else {
-    renderHome();
-  }
-  if (data && JSON.stringify(data.problems) !== JSON.stringify(state.problems)) {
-    state.problems = problemRowsForIdentity(data.problems);
-    saveProblemsCache();
-    buildFilterOptions();
-    const h = location.hash || "#/";
-    if (h === "#/tasks") renderTasksTable();
-    else if (h === "#/") renderHome();
-    else if (h === "#/archive") renderArchive();
-    else if (h === "#/admin") renderContestProblemPicker();
-  }
+  router();
 
   // 4. stats never block rendering
   statsP.then(() => {

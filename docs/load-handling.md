@@ -52,12 +52,12 @@ Supabase query is in flight. The refresh selects the lean metadata columns
 changed or no-PDF row fetches its statement once on detail. No refresh downloads
 problem files.
 
-Public detail responses are `private, max-age=60`, samples are
-`private, max-age=300`, and PDFs are `private, max-age=600`. Contest-hidden or
-admin-visible responses are shortened to 30 seconds. All remain `Vary: Cookie`;
-there is no shared/CDN cache of authenticated responses. The frontend also starts
-the PDF frame from the list's `has_pdf` flag and prefetches the PDF/samples after
-detail render, so repeated opens are served from the browser cache.
+Problem browsing requires a verified website session. Member API responses,
+including statements and PDFs, use `private, no-store`; there is no shared/CDN
+cache or persistent HTTP cache of those responses. The SPA deduplicates detail
+and sample requests in memory and clears them on identity changes. PDF frames
+load on opening a problem, without speculative hover downloads. Guests fetch
+only bounded landing previews through `/api/home`.
 
 Build the optional C++ PCH as root after a compiler/toolchain update:
 

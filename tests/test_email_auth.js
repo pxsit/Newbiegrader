@@ -38,6 +38,7 @@ function harness(replies) {
     querySelector: (selector) => tabs.find((tab) => selector === `[data-authtab="${tab.dataset.authtab}"]`),
   },
     API: '', location: { hash: '#/login' }, refreshMe: async () => { refreshed++; },
+    loginDestination: () => '#/tasks',
     GraderBotVerification: bot,
     fetch: async (url, init) => {
       calls.push({ url, payload: JSON.parse(init.body), init });

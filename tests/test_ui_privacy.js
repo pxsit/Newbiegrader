@@ -24,6 +24,7 @@ function harness(storage = new Map(), blocked = false) {
     apiPostJson: async () => ({}), clearGetCache: () => calls.push("cache"),
     clearLocalWorkspace: () => calls.push("workspace"),
     setDraftHint: () => {}, refreshMe: async () => {}, renderTasksTable: () => calls.push("render"),
+    loadPublicHome: async () => calls.push("public-home"), renderHome: () => {},
     $: (key) => {
       if (!elements.has(key)) {
         const classes = new Set(["hidden"]);
@@ -180,7 +181,7 @@ test("successful logout clears editor and current problem so unload cannot resav
   assert.equal(h.context.state.current, null);
   assert.equal(h.context.state.file, null);
   assert.ok(h.calls.includes("workspace"));
-  assert.equal(h.context.location.hash, "#/tasks");
+  assert.equal(h.context.location.hash, "#/");
 });
 
 test("light is the default and long-lived login is not preselected", () => {

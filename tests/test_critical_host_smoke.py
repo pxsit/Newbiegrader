@@ -47,8 +47,11 @@ class SmokeCredentialBoundary(unittest.TestCase):
                 headers.append(('Cache-Control', 'no-store'))
                 if not production and sent.get('x-newbiegrader-staging-key') != key:
                     status = 403
-            elif path == '/api/admin/overview':
-                status = 403
+            elif path == '/api/home':
+                body = {'problems_count': reported_count, 'problems': []}
+            elif path.startswith('/api/problems') or path in ('/api/stats', '/api/contests', '/api/admin/overview'):
+                status = 401
+                headers.append(('Cache-Control', 'private, no-store'))
             elif path.startswith('/api/jobs/') or path in ('/api/submit', '/api/run'):
                 status = 401
             elif path == '/api/auth/login':
@@ -101,7 +104,7 @@ class SmokeCredentialBoundary(unittest.TestCase):
             finally:
                 os.umask(previous_umask)
             report = json.loads(output.getvalue())
-        self.assertEqual(report['passed'], 15 if production else 17)
+        self.assertEqual(report['passed'], 21 if production else 23)
         self.assertFalse(report['real_login_verified'])
         self.assertFalse(report['authenticated_job_submitted'])
         self.assertTrue(requests)

@@ -17,6 +17,14 @@ account lookup; it does not add a second database round trip on protected reques
 There is no positive authorization cache. Anonymous requests without a session
 need no session lookup.
 
+Guests can view the landing page and use authentication/recovery. Other website
+pages redirect to login after the session/remember checks finish. The API denies
+member endpoints with `401`, including catalog, statements, samples and PDFs.
+`/api/home` supplies bounded landing previews; health/version/language diagnostics
+remain public. Member responses use `private, no-store` and identity changes clear
+the SPA caches. This boundary does not require a new database migration or key
+rotation.
+
 Session and remember cookies refer to the same revocable family. Normal logout
 revokes every family represented by those signed browser cookies and clears the
 cookies only after the database acknowledges success. It leaves another device's

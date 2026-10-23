@@ -37,6 +37,10 @@ Strict limits · Undisclosed tests · Asynchronous judging · Contests · Teache
 
 Newbiegrader is a web-based programming judge designed for teaching competitive programming in Thai. Students submit solutions in **Python 3**, **C (C11)** or **C++ (C++17)** and receive automatic verdicts under real time and memory limits, the same way they would on a professional contest platform.
 
+Guests can view the landing page and use login, registration and recovery.
+Opening problems, contests, history and other member pages requires login;
+the API enforces the same boundary, including statement PDFs and samples.
+
 Practice submissions show input, expected output and actual output for failed cases to their owner. Contest submissions keep hidden tests private; upcoming/running contest problems also withhold extra feedback through the practice path. Previously disclosed practice data cannot be made secret again by reusing it in a contest. See the [feedback policy](docs/submission-feedback-policy.md).
 
 <div align="center">

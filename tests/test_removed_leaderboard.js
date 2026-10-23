@@ -16,6 +16,8 @@ test("old leaderboard bookmarks replace their entry with the problem list", () =
   const calls = [];
   const context = vm.createContext({
     location: { hash: "#/leaderboard" }, _pendingNav: null,
+    state: { user: { email: 'synthetic@example.invalid' }, authReady: true },
+    publicRoute: () => false,
     _syncHistoryEntry() {}, stopContestTicker() {},
     _nav: (...args) => calls.push(args),
   });

@@ -96,8 +96,18 @@ def main():
         me = json.loads(body)
         check('anonymous identity and auth cache', status == 200 and me.get('user') is None
               and me.get('is_admin') is False and headers.get('Cache-Control') == 'no-store')
+        status, _, body = request('/api/home')
+        preview = json.loads(body)
+        check('bounded public landing', status == 200
+              and preview.get('problems_count') == args.expected_problems
+              and len(preview.get('problems', [])) <= 9)
+        for path in ('/api/problems', '/api/problems/synthetic',
+                     '/api/problems/synthetic/pdf', '/api/stats', '/api/contests'):
+            status, headers, _ = request(path)
+            check('anonymous member data denied ' + path,
+                  status == 401 and 'no-store' in headers.get('Cache-Control', ''))
         status, _, _ = request('/api/admin/overview')
-        check('anonymous admin denied', status == 403)
+        check('anonymous admin denied', status == 401)
         status, _, _ = request('/api/jobs/synthetic-not-a-job')
         check('anonymous job lookup denied', status == 401)
         for path, form in [('/api/submit', b'problem=synthetic&language=python&code=print%281%29'),

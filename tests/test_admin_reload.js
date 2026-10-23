@@ -30,7 +30,7 @@ function harness({ me, restore = async () => ({ restored: false }), stats = asyn
     }
     return nodes.get(id);
   }
-  const views = ['home', 'admin', 'tasks'].map((v) => node('view-' + v));
+  const views = ['home', 'admin', 'tasks', 'login'].map((v) => node('view-' + v));
   const location = {
     get hash() { return hash; },
     set hash(value) { hash = value; queued.push(() => events.get('hashchange')()); },
@@ -50,13 +50,14 @@ function harness({ me, restore = async () => ({ restored: false }), stats = asyn
       if (url === '/api/auth/restore') return restore();
       if (url === '/api/health') { if (healthFails) throw new Error('synthetic outage'); return { ok: true }; }
       if (url === '/api/problems') return { problems: [] };
+      if (url === '/api/home') return { problems: [], configured: true, summary: {} };
       throw new Error('Unexpected API request: ' + url);
     },
-    clearGetCache() {}, problemRowsForIdentity: (rows) => rows,
+    _getGen: 0, clearGetCache() { context._getGen++; }, problemRowsForIdentity: (rows) => rows,
     setLang() {}, lastLang: () => null, bindEditorKeys() {}, saveDraft() {},
     openPalette() {}, maybeShowCookieBanner() {}, loadProblemsCache: () => false,
     problemsCacheAgeMs: () => Infinity, saveProblemsCache() {}, buildFilterOptions() {},
-    stopContestTicker() {}, renderHome() {}, renderTasksTable() {},
+    stopContestTicker() {}, renderHome() {}, renderTasksTable() {}, setAuthMode() {},
     loadHistory() {}, loadAdminReports() {}, loadAdmins() {}, addAdminByEmail() {}, loadAdminHistory() {},
     fetchStats: () => { calls.push('/api/stats'); return stats(); }, buildProblemSelect() {}, renderContestProblemPicker() {},
     loadAdminContests() { adminLoads++; }, loadOverview() { adminLoads++; },
@@ -69,6 +70,7 @@ function harness({ me, restore = async () => ({ restored: false }), stats = asyn
   load('const state =', 'const _sampleInflight');
   load('function show(view)', '/* ---------------- home');
   load('async function refreshMe()', '$("login-btn").onclick');
+  load('async function refreshProblems()', '/* Canonical tag taxonomy');
   load('const ADMIN_TABS =', 'function setAdminsStatus(');
   load('async function init()', '\ninit();');
   return { context, state: vm.runInContext('state', context), node, location, calls, replaced,
@@ -94,11 +96,12 @@ test('explicitly absent remember cookie skips restoration without granting an id
   assert.equal(h.loads(), 0);
 });
 
-test('public statistics start while identity is pending and never delay auth readiness', async () => {
+test('public landing starts while identity is pending without requesting protected statistics', async () => {
   const identity = deferred(), stats = deferred();
   const h = harness({ me: () => identity.promise, stats: () => stats.promise, route: '#/' });
   const boot = h.start();
-  assert.equal(h.calls.filter(url => url === '/api/stats').length, 1);
+  assert.equal(h.calls.filter(url => url === '/api/home').length, 1);
+  assert.equal(h.calls.includes('/api/stats'), false);
   assert.equal(h.state.authReady, false);
   identity.resolve({...anonymous, restore_available: false});
   await boot; await h.flush();
@@ -121,9 +124,9 @@ test('reload retains admin URL and hides controls until the actual identity reso
   const boot = h.start();
   assert.equal(h.state.authReady, false);
   assert.equal(h.location.hash, '#/admin');
-  assert.equal(h.node('view-admin').classList.contains('active'), true);
+  assert.equal(h.node('view-admin').classList.contains('active'), false);
+  assert.equal(h.node('view-home').classList.contains('active'), true);
   assert.equal(h.node('admin-content').classList.contains('hidden'), true);
-  assert.match(h.node('admin-session-status').textContent, /กำลังตรวจสอบสิทธิ์/);
   assert.equal(h.loads(), 0);
   pending.resolve(admin);
   await boot; await h.flush();
@@ -153,23 +156,23 @@ for (const [name, identity] of [['regular user', regular], ['anonymous', anonymo
   test(`${name} is denied after identity and restoration complete, with no admin data load`, async () => {
     const h = harness({ me: async () => identity });
     await h.start(); await h.flush();
-    assert.equal(h.location.hash, '#/');
-    assert.deepEqual(h.replaced, ['#/']);
+    assert.equal(h.location.hash, name === 'anonymous' ? '#/login' : '#/');
+    assert.deepEqual(h.replaced, [name === 'anonymous' ? '#/login' : '#/']);
     assert.equal(h.loads(), 0);
     assert.equal(h.node('admin-content').classList.contains('hidden'), true);
   });
 }
 
-test('identity or restoration outage stays on admin with a safe retry message', async () => {
+test('identity or restoration outage never paints protected content and offers login retry', async () => {
   for (const identityFails of [true, false]) {
     const h = harness({ me: async () => {
       if (identityFails) throw new Error('synthetic identity outage');
       return anonymous;
     }, restore: async () => { throw new Error('synthetic restore outage'); } });
     await h.start(); await h.flush();
-    assert.equal(h.location.hash, '#/admin');
+    assert.equal(h.location.hash, '#/login');
     assert.equal(h.state.authError, true);
-    assert.match(h.node('admin-session-status').textContent, /ตรวจสอบสิทธิ์ไม่สำเร็จ/);
+    assert.match(h.node('auth-err').textContent, /ไม่สำเร็จ/);
     assert.equal(h.node('admin-content').classList.contains('hidden'), true);
     assert.equal(h.loads(), 0);
   }
@@ -212,4 +215,41 @@ test('public route paints immediately while identity is pending', async () => {
   pending.resolve(regular); await boot; await h.flush();
   assert.equal(h.location.hash, '#/');
   assert.equal(h.loads(), 0);
+});
+
+for (const route of ['#/tasks', '#/archive', '#/task/synthetic', '#/submission/synthetic',
+  '#/history', '#/settings', '#/contests', '#/contests/synthetic']) {
+  test(`anonymous direct navigation to ${route} opens login without loading protected data`, async () => {
+    const h = harness({ me: async () => ({...anonymous, restore_available: false}), route });
+    await h.start(); await h.flush();
+    assert.equal(h.location.hash, '#/login');
+    assert.equal(h.state.authReturnTo, route);
+    assert.equal(h.context.loginDestination(), route);
+    assert.equal(h.node('view-login').classList.contains('active'), true);
+    assert.equal(h.calls.includes('/api/problems'), false);
+    assert.equal(h.calls.includes('/api/stats'), false);
+  });
+}
+
+test('login destination only accepts internal protected application routes', () => {
+  const h = harness({ me: async () => anonymous });
+  for (const route of ['https://evil.invalid', '//evil.invalid', '#/login', '#/task/x?next=evil']) {
+    h.state.authReturnTo = route;
+    assert.equal(h.context.loginDestination(), '#/tasks');
+  }
+});
+
+
+test('late member catalog cannot repopulate state after logout', async () => {
+  const h = harness({ me: async () => regular });
+  const pending = deferred();
+  h.state.user = regular.user;
+  h.context.apiGet = () => pending.promise;
+  const loading = h.context.refreshProblems();
+  h.context.clearGetCache();
+  h.state.user = null;
+  h.state.problems = [];
+  pending.resolve({problems: [{id: 'private-catalog-canary'}]});
+  assert.equal(await loading, false);
+  assert.equal(h.state.problems.length, 0);
 });

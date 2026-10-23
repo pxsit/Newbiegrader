@@ -31,7 +31,7 @@ class PublicHeaders(unittest.TestCase):
 
     def test_api_headers_deny_base_and_object_injection(self):
         response = TestClient(test_server().app).get('/api/unknown-synthetic-path')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 401)
         policy = response.headers['content-security-policy']
         for directive in ("base-uri 'none'", "object-src 'none'", "script-src 'self'",
                           "frame-ancestors 'self'"):
