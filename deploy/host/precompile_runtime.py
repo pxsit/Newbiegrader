@@ -15,8 +15,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--release', type=Path, default=Path('/opt/newbiegrader/current'))
     args = parser.parse_args()
-    if os.geteuid() != 0 or sys.version_info[:2] != (3, 11):
-        raise SystemExit('Run as root with the dedicated project Python 3.11')
+    if os.geteuid() != 0 or sys.version_info[:2] != (3, 13):
+        raise SystemExit('Run as root with the dedicated project Python 3.13')
     prefix = Path('/usr/local/lib/newbiegrader')
     if Path(sys.prefix).resolve() != prefix / 'venv':
         raise SystemExit('Refusing to modify another Python installation')
@@ -44,7 +44,7 @@ def main() -> None:
                 raise SystemExit('Runtime bytecode preparation failed')
     finally:
         os.umask(old_mask)
-    print('Prepared trusted Python 3.11 runtime and release bytecode')
+    print('Prepared trusted Python 3.13 runtime and release bytecode')
 
 
 if __name__ == '__main__':

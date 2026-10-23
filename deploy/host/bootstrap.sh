@@ -18,11 +18,11 @@ install -d -m 0755 /opt/newbiegrader/releases /usr/local/lib/newbiegrader /var/l
 install -d -m 0700 /etc/newbiegrader /var/lib/newbiegrader/sandbox-identities /var/lib/newbiegrader/capacity
 install -d -m 0755 /var/lib/newbiegrader/workspaces /etc/systemd/journald.conf.d
 python3 -m venv /usr/local/lib/newbiegrader/bootstrap
-/usr/local/lib/newbiegrader/bootstrap/bin/pip install --disable-pip-version-check 'uv==0.13.1'
+/usr/local/lib/newbiegrader/bootstrap/bin/pip install --disable-pip-version-check 'uv==0.13.5'
 export UV_PYTHON_INSTALL_DIR=/usr/local/lib/newbiegrader/python
-/usr/local/lib/newbiegrader/bootstrap/bin/uv python install 3.11.17
+/usr/local/lib/newbiegrader/bootstrap/bin/uv python install 3.13.17
 if ! test -x /usr/local/lib/newbiegrader/venv/bin/python; then
-    /usr/local/lib/newbiegrader/bootstrap/bin/uv venv --python 3.11.17 /usr/local/lib/newbiegrader/venv
+    /usr/local/lib/newbiegrader/bootstrap/bin/uv venv --python 3.13.17 /usr/local/lib/newbiegrader/venv
 fi
 cat > /etc/systemd/journald.conf.d/60-newbiegrader-bounds.conf <<'EOF'
 [Journal]

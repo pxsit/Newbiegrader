@@ -1,0 +1,122 @@
+{
+  "get_after_put": {
+    "body": {
+      "configured": true,
+      "profile": {
+        "default_language": "cpp",
+        "display_name": "Ally",
+        "email": "student.a@example.com",
+        "name": "Alice A"
+      }
+    },
+    "status": 200
+  },
+  "get_after_update_clears_language": {
+    "body": {
+      "configured": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "Ally2",
+        "email": "student.a@example.com",
+        "name": "Alice A"
+      }
+    },
+    "status": 200
+  },
+  "get_anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "get_default": {
+    "body": {
+      "configured": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "",
+        "email": "student.a@example.com",
+        "name": "Alice A"
+      }
+    },
+    "status": 200
+  },
+  "other_user_unaffected": {
+    "body": {
+      "configured": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "",
+        "email": "student.b@example.com",
+        "name": "Bob B"
+      }
+    },
+    "status": 200
+  },
+  "put_anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "put_bad_language": {
+    "body": {
+      "detail": "bad default_language"
+    },
+    "status": 400
+  },
+  "put_name_truncated_to_50": {
+    "body": {
+      "ok": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "email": "student.a@example.com",
+        "user_email": "student.a@example.com"
+      }
+    },
+    "status": 200
+  },
+  "put_not_object": {
+    "body": {
+      "detail": "JSON body must be an object"
+    },
+    "status": 400
+  },
+  "put_numeric_name_coerced": {
+    "body": {
+      "ok": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "12345",
+        "email": "student.a@example.com",
+        "user_email": "student.a@example.com"
+      }
+    },
+    "status": 200
+  },
+  "put_set": {
+    "body": {
+      "ok": true,
+      "profile": {
+        "default_language": "cpp",
+        "display_name": "Ally",
+        "email": "student.a@example.com",
+        "user_email": "student.a@example.com"
+      }
+    },
+    "status": 200
+  },
+  "put_update_existing": {
+    "body": {
+      "ok": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "Ally2",
+        "email": "student.a@example.com",
+        "user_email": "student.a@example.com"
+      }
+    },
+    "status": 200
+  }
+}

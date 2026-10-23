@@ -110,7 +110,7 @@ The OFL fonts require the licence text to ship with them; it does, in
 
 | Component | Licence | Note |
 | --- | --- | --- |
-| `python:3.11-slim` (Dockerfile) | PSF-2.0 | Permissive. |
+| `python:3.13-slim` (Dockerfile) | PSF-2.0 | Permissive. |
 | `gcc`, `g++` (Dockerfile, `deploy/host/bootstrap.sh`) | GPL-3.0-with-GCC-exception | Used as unmodified toolchain binaries; the runtime exception permits linking. Separate processes, never linked into the AGPL work. |
 | `nginx` (`deploy/host/bootstrap.sh`) | BSD-2-Clause | Reverse proxy only; runs as a separate service. |
 | `python3-venv`, `curl`, `ca-certificates`, `rsync` | PSF-2.0 / curl / MPL-2.0 / GPL-3.0 | Unmodified OS tooling, separate processes. |

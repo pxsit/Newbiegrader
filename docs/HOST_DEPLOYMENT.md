@@ -1,6 +1,6 @@
 # Native backend deployment
 
-The backend runs on an Ubuntu PC with Python 3.11, Nginx and systemd. The
+The backend runs on an Ubuntu PC with Python 3.13, Nginx and systemd. The
 frontend remains on Cloudflare Pages; Supabase retains metadata, identities and
 the durable queue. See [current architecture](PRODUCTION_ARCHITECTURE.md).
 Deployment templates are in `deploy/host/`. Application source, protected
@@ -10,8 +10,12 @@ problem files and credentials are separate installation inputs.
 
 The production PC has an i5-10400T (6 cores / 12 threads), about 7.1 GiB RAM and
 SSD storage. Keep system Python unchanged. `bootstrap.sh` installs a separate
-3.11 interpreter and venv under `/usr/local/lib/newbiegrader/` and preserves
+3.13 interpreter and venv under `/usr/local/lib/newbiegrader/` and preserves
 existing firewall, Tailscale, disks and unrelated services.
+
+To move an existing host to a newer Python, follow the
+[Python upgrade guide](PYTHON_UPGRADE.md); re-running `bootstrap.sh` does not
+replace an existing venv.
 
 `newbiegrader-worker@1.service` through `@4.service` each run one judge job at a
 time. Each unit has one CPU, 1 GiB memory, no swap and a private 128 MiB /

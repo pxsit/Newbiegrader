@@ -10,9 +10,9 @@ Documentation-only updates do not change that running application release.
   → loopback Nginx port 8081 → FastAPI port 8000. The origin has no public HTTP
   listener and no retired-host fallback.
 - **Backend:** Ubuntu 26.04 x86_64 PC, Intel i5-10400T (6 physical cores /
-  12 threads), about 7.1 GiB RAM and SSD storage; dedicated Python 3.11 venv.
+  12 threads), about 7.1 GiB RAM and SSD storage; dedicated Python 3.13 venv.
   API and judging use separate systemd services. The API has one CPU / 320 MiB;
-  the system Python is preserved and the project uses Python 3.11.17.
+  the system Python is preserved and the project uses Python 3.13.17.
 - **Judging:** exactly four `newbiegrader-worker@N.service` instances, one job
   per unit and serial tests within each job. Each has one CPU / 1 GiB, with an
   aggregate four-CPU / 4 GiB slice. Private workspace tmpfs, per-job cgroups,

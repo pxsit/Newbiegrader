@@ -1,0 +1,128 @@
+{
+  "DELETE /api/admin/admins/admin2@example.com": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "DELETE /api/contests/c-up": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "DELETE /api/contests/c-up/register": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/admin/admins": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/admin/overview": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/admin/submissions": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/contests": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/contests/c-up": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/contests/c-up/announcements": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/history": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/history/00000000-0000-4000-8000-000000000001": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/profile": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/reports": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "GET /api/stats": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "POST /api/admin/admins": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "POST /api/contests": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "POST /api/contests/c-up/announcements": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "POST /api/contests/c-up/register": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "POST /api/report": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "PUT /api/profile": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "PUT /api/reports/00000000-0000-4000-8000-000000000101": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  }
+}

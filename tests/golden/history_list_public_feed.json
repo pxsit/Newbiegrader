@@ -1,0 +1,329 @@
+{
+  "anonymous_mine": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "default": {
+    "body": {
+      "configured": true,
+      "submissions": [
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "CE": 1
+          },
+          "created_at": "2001-01-07T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000009",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 0,
+          "problem": "alpha",
+          "score": 0,
+          "total": 2,
+          "verdict": "CE"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-blind",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-06T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000008",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "delta",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        },
+        {
+          "accepted": false,
+          "contest_id": "c-run",
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-05T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000006",
+          "language": "python",
+          "name": "นักเรียน",
+          "passed": 1,
+          "problem": "gamma",
+          "score": 40,
+          "total": 2,
+          "verdict": "WA"
+        },
+        {
+          "accepted": false,
+          "contest_id": "c-run",
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-04T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000005",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 1,
+          "problem": "gamma",
+          "score": 50,
+          "total": 2,
+          "verdict": "WA"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-02T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000002",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 1,
+          "problem": "alpha",
+          "score": 50,
+          "total": 2,
+          "verdict": "WA"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-ended",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T12:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000004",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        },
+        {
+          "accepted": true,
+          "contest_id": null,
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T01:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000001",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "mine_no_rows": {
+    "body": {
+      "configured": true,
+      "submissions": []
+    },
+    "status": 200
+  },
+  "problem_hidden_for_student": {
+    "body": {
+      "configured": true,
+      "peer_access": {
+        "allowed": false,
+        "reason": "contest"
+      },
+      "submissions": []
+    },
+    "status": 200
+  },
+  "problem_number": {
+    "body": {
+      "configured": true,
+      "peer_access": {
+        "allowed": true,
+        "reason": ""
+      },
+      "submissions": [
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "CE": 1
+          },
+          "created_at": "2001-01-07T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000009",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 0,
+          "problem": "alpha",
+          "score": 0,
+          "total": 2,
+          "verdict": "CE"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-02T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000002",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 1,
+          "problem": "alpha",
+          "score": 50,
+          "total": 2,
+          "verdict": "WA"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-ended",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T12:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000004",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        },
+        {
+          "accepted": true,
+          "contest_id": null,
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T01:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000001",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "problem_slug": {
+    "body": {
+      "configured": true,
+      "peer_access": {
+        "allowed": true,
+        "reason": ""
+      },
+      "submissions": [
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "CE": 1
+          },
+          "created_at": "2001-01-07T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000009",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 0,
+          "problem": "alpha",
+          "score": 0,
+          "total": 2,
+          "verdict": "CE"
+        },
+        {
+          "accepted": false,
+          "contest_id": null,
+          "counts": {
+            "AC": 1,
+            "WA": 1
+          },
+          "created_at": "2001-01-02T00:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000002",
+          "language": "python",
+          "name": "Bob B",
+          "passed": 1,
+          "problem": "alpha",
+          "score": 50,
+          "total": 2,
+          "verdict": "WA"
+        },
+        {
+          "accepted": true,
+          "contest_id": "c-ended",
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T12:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000004",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        },
+        {
+          "accepted": true,
+          "contest_id": null,
+          "counts": {
+            "AC": 2
+          },
+          "created_at": "2001-01-01T01:00:00+00:00",
+          "filename": null,
+          "id": "00000000-0000-4000-8000-000000000001",
+          "language": "python",
+          "name": "Alice A",
+          "passed": 2,
+          "problem": "alpha",
+          "score": 100,
+          "total": 2,
+          "verdict": "AC"
+        }
+      ]
+    },
+    "status": 200
+  },
+  "unknown_problem": {
+    "body": {
+      "configured": true,
+      "peer_access": {
+        "allowed": false,
+        "reason": "hidden"
+      },
+      "submissions": []
+    },
+    "status": 200
+  }
+}

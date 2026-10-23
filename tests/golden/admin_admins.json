@@ -1,0 +1,197 @@
+{
+  "add_duplicate": {
+    "body": {
+      "detail": "already an admin"
+    },
+    "status": 409
+  },
+  "add_env_admin": {
+    "body": {
+      "detail": "this email is a bootstrap admin (ADMIN_EMAILS)"
+    },
+    "status": 409
+  },
+  "add_invalid_email": {
+    "body": {
+      "detail": "invalid email"
+    },
+    "status": 400
+  },
+  "add_missing_email": {
+    "body": {
+      "detail": "invalid email"
+    },
+    "status": 400
+  },
+  "add_ok_normalised": {
+    "body": {
+      "email": "carol@example.com",
+      "ok": true,
+      "source": "database"
+    },
+    "status": 200
+  },
+  "add_student": {
+    "body": {
+      "detail": "admin only"
+    },
+    "status": 403
+  },
+  "delete_env_admin": {
+    "body": {
+      "detail": "bootstrap admins are fixed in ADMIN_EMAILS on the server"
+    },
+    "status": 409
+  },
+  "delete_invalid_email": {
+    "body": {
+      "detail": "invalid email"
+    },
+    "status": 400
+  },
+  "delete_not_found": {
+    "body": {
+      "detail": "admin not found"
+    },
+    "status": 404
+  },
+  "delete_ok": {
+    "body": {
+      "email": "carol@example.com",
+      "ok": true
+    },
+    "status": 200
+  },
+  "delete_student": {
+    "body": {
+      "detail": "admin only"
+    },
+    "status": 403
+  },
+  "list_admin": {
+    "body": {
+      "admins": [
+        {
+          "created_at": null,
+          "created_by": "ADMIN_EMAILS",
+          "email": "admin@example.com",
+          "removable": false,
+          "source": "env"
+        },
+        {
+          "created_at": "2001-01-03T00:00:00+00:00",
+          "created_by": "admin@example.com",
+          "email": "admin2@example.com",
+          "removable": true,
+          "source": "database"
+        }
+      ],
+      "candidates": [
+        {
+          "email": "carol@example.com",
+          "name": "Carol C"
+        },
+        {
+          "email": "student.b@example.com",
+          "name": "Bob B"
+        },
+        {
+          "email": "student.a@example.com",
+          "name": "Alice A"
+        }
+      ],
+      "configured": true,
+      "you": "admin@example.com"
+    },
+    "status": 200
+  },
+  "list_after_add": {
+    "body": {
+      "admins": [
+        {
+          "created_at": null,
+          "created_by": "ADMIN_EMAILS",
+          "email": "admin@example.com",
+          "removable": false,
+          "source": "env"
+        },
+        {
+          "created_at": "2001-01-03T00:00:00+00:00",
+          "created_by": "admin@example.com",
+          "email": "admin2@example.com",
+          "removable": true,
+          "source": "database"
+        },
+        {
+          "created_at": "<ts>",
+          "created_by": "admin@example.com",
+          "email": "carol@example.com",
+          "removable": true,
+          "source": "database"
+        }
+      ],
+      "candidates": [
+        {
+          "email": "student.b@example.com",
+          "name": "Bob B"
+        },
+        {
+          "email": "student.a@example.com",
+          "name": "Alice A"
+        }
+      ],
+      "configured": true,
+      "you": "admin@example.com"
+    },
+    "status": 200
+  },
+  "list_after_delete": {
+    "body": {
+      "admins": [
+        {
+          "created_at": null,
+          "created_by": "ADMIN_EMAILS",
+          "email": "admin@example.com",
+          "removable": false,
+          "source": "env"
+        },
+        {
+          "created_at": "2001-01-03T00:00:00+00:00",
+          "created_by": "admin@example.com",
+          "email": "admin2@example.com",
+          "removable": true,
+          "source": "database"
+        }
+      ],
+      "candidates": [
+        {
+          "email": "carol@example.com",
+          "name": "Carol C"
+        },
+        {
+          "email": "student.b@example.com",
+          "name": "Bob B"
+        },
+        {
+          "email": "student.a@example.com",
+          "name": "Alice A"
+        }
+      ],
+      "configured": true,
+      "you": "admin@example.com"
+    },
+    "status": 200
+  },
+  "list_anonymous": {
+    "body": {
+      "detail": "login required"
+    },
+    "status": 401
+  },
+  "list_student": {
+    "body": {
+      "detail": "admin only"
+    },
+    "status": 403
+  }
+}

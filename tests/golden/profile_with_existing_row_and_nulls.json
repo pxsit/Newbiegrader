@@ -1,0 +1,14 @@
+{
+  "null_columns_become_empty_strings": {
+    "body": {
+      "configured": true,
+      "profile": {
+        "default_language": "",
+        "display_name": "",
+        "email": "student.b@example.com",
+        "name": "Bob B"
+      }
+    },
+    "status": 200
+  }
+}
