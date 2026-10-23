@@ -74,7 +74,7 @@ the toolchain becomes incompatible.
 ## Submission latency
 
 Prepare trusted Python bytecode before each release with
-`deploy/host/precompile_runtime.py` and the dedicated Python 3.11 venv. Workers
+`deploy/host/precompile_runtime.py` and the dedicated Python 3.13 venv. Workers
 attempt the next durable claim immediately after completion; idle polling backs
 off to one second and outages to 30 seconds. Browser polls for active/head-of-queue
 jobs cap their scheduled interval at one second, while deeper queues retain
