@@ -3,6 +3,7 @@ from contextlib import ExitStack
 import errno
 import os
 from pathlib import Path
+import socket
 import subprocess
 import sys
 import tempfile
@@ -124,6 +125,33 @@ class CriticalNetworkExecution(unittest.TestCase):
         result = server._run_playground(None, ".py", source, "", 5, 128)
         self.assertEqual(result.get("verdict"), "OK", result)
         self.assertEqual(result["stdout"], "synthetic-network-denied\n")
+
+    def test_critical_job_cannot_reach_postgres_or_its_credentials(self):
+        # Real listeners stand in for PostgreSQL's Unix socket and TCP port. The
+        # parent holds database settings, so any leak into the job shows up.
+        server = test_server()
+        unix_path = str(self.base / ".s.PGSQL.5432")
+        with socket.socket(socket.AF_UNIX) as unix, socket.socket(socket.AF_INET) as tcp:
+            unix.bind(unix_path)
+            unix.listen()
+            tcp.bind(("127.0.0.1", 0))
+            tcp.listen()
+            self.stack.enter_context(patch.dict(os.environ, {
+                "GRADER_DB_DSN": f"host={self.base} dbname=newbiegrader",
+                "PGPASSWORD": "synthetic-secret", "PGHOST": str(self.base)}))
+            source = "\n".join((
+                'import errno,os,socket',
+                'leaked=[k for k in os.environ if k.startswith(("GRADER_DB","PG","DATABASE"))]',
+                'assert not leaked,leaked',
+                f'for family,target in ((socket.AF_UNIX,{unix_path!r}),(socket.AF_INET,("127.0.0.1",{tcp.getsockname()[1]}))):',
+                ' try:',
+                '  s=socket.socket(family,socket.SOCK_STREAM);s.connect(target);raise AssertionError("database reachable")',
+                ' except OSError as e:assert e.errno==errno.EPERM,e',
+                'print("database-unreachable")',
+                ''))
+            result = server._run_playground(None, ".py", source, "", 5, 128)
+        self.assertEqual(result.get("verdict"), "OK", result)
+        self.assertEqual(result["stdout"], "database-unreachable\n")
 
     def test_critical_compile_launcher_has_the_same_network_filter(self):
         with job_sandbox.scope():

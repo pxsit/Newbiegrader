@@ -1,0 +1,5 @@
+# MAPNAME        OS-USER              DATABASE-ROLE
+# The API (and health timer) run as newbiegrader-api; judge workers run as root
+# (newbiegrader-worker@N.service). Nothing else is mapped.
+newbiegrader     newbiegrader-api     newbiegrader_api
+newbiegrader     root                 newbiegrader_worker

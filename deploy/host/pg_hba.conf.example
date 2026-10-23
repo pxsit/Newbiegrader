@@ -1,0 +1,11 @@
+# PostgreSQL client authentication for Newbiegrader (native PG 18, Unix socket only).
+# No password exists anywhere: the kernel reports the caller's OS user (peer) and
+# pg_ident.conf maps it to one database role. Sandboxed judge jobs run as private
+# UIDs that have no mapping, and their syscall filter forbids socket() anyway.
+#
+# TYPE  DATABASE        USER                 METHOD
+local   all             postgres             peer
+local   newbiegrader    newbiegrader_api     peer map=newbiegrader
+local   newbiegrader    newbiegrader_worker  peer map=newbiegrader
+local   all             all                  reject
+host    all             all                  all  reject
