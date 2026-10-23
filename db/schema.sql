@@ -220,7 +220,8 @@ create table if not exists public.auth_rate_buckets (
 );
 create index if not exists auth_rate_buckets_expiry on public.auth_rate_buckets(expires_at);
 
--- Ephemeral: not exported with account data.
+-- Short-lived rows. Backups may skip them; the one-time Supabase cutover carries
+-- them over so signed-in users stay signed in (docs/POSTGRES_CUTOVER.md).
 create table if not exists public.web_sessions (
   token_hash text primary key check (token_hash ~ '^[0-9a-f]{64}$'),
   user_email text not null references public.users(email) on delete cascade,
